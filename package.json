@@ -12,7 +12,9 @@
   "dependencies": {
     "expo": "17.0.0",
     "react": "16.0.0-alpha.6",
-    "react-native": "https://github.com/expo/react-native/archive/sdk-17.0.0.tar.gz"
+    "react-native": "https://github.com/expo/react-native/archive/sdk-17.0.0.tar.gz",
+    "redux-form": "^6.7.0",
+    "reselect": "^3.0.1"
   },
   "devDependencies": {
     "babel-eslint": "^7.2.3",

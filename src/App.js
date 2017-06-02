@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react'
 import { Text, View } from 'react-native'
 import { connect } from 'react-redux'
+import { selectors as testSelectors } from './modules/test'
 
 const App = ({ test }) =>
   <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -13,6 +14,6 @@ App.propTypes = {
 
 export default connect(
   state => ({
-    test: state.test
+    test: testSelectors.test(state)
   })
 )(App)
