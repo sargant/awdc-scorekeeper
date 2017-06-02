@@ -1,8 +1,8 @@
 import { combineReducers } from 'redux'
 import { reducer as formReducer } from 'redux-form'
-import { reducer as testReducer } from './test'
+import entitiesRootReducer from './entities/rootReducer'
 
 export default combineReducers({
   form: formReducer,
-  test: testReducer
+  entities: entitiesRootReducer
 })
