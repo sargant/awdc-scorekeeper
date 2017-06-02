@@ -32,7 +32,7 @@ export default function App () {
   return (
     <View style={{ flex: 1 }}>
       <StatusBar barStyle='light-content' />
-      <Navigator />
+      <Navigator onNavigationStateChange={null} />
     </View>
   )
 }
