@@ -1,21 +1,26 @@
 {
-  "name": "awdc-scorekeeper",
-  "description": "An empty new project",
+  "name": "AWDC Scorekeeper",
+  "description": "Scorekeeping for AWDC competition",
   "slug": "awdc-scorekeeper",
-  "privacy": "public",
+  "privacy": "unlisted",
   "sdkVersion": "17.0.0",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "orientation": "portrait",
-  "primaryColor": "#cccccc",
+  "primaryColor": "#009688",
   "icon": "./assets/icons/app.png",
   "loading": {
     "icon": "./assets/icons/loading.png",
-    "hideExponentText": false
+    "hideExponentText": true
   },
   "packagerOpts": {
     "assetExts": ["ttf", "mp4"]
   },
   "ios": {
     "supportsTablet": true
+  },
+  "androidStatusBarColor": "#FFFFFF",
+  "androidStatusBar": {
+    "barStyle": "light-content",
+    "backgroundColor": "#009688"
   }
 }

@@ -24,14 +24,9 @@ class AddCompetitorScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
     const saveButtonAction = navigation.state.params &&
       navigation.state.params.saveButtonAction
-    const headerRight =
-      <HeaderButton
-        onPress={saveButtonAction || (() => {})}>
-        <Entypo name='save' color='white' size={24} />
-      </HeaderButton>
     return {
       title: 'Add Competitor',
-      headerRight
+      headerRight: <HeaderButton onPress={saveButtonAction} kind='Entypo' name='save' />
     }
   }
   saveForm = () => {

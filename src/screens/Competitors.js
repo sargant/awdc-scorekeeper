@@ -1,16 +1,22 @@
 import React, { PropTypes } from 'react'
 import ReactNative from 'react-native'
 import autoConnect from 'react-redux-autoconnect'
-import { Ionicons } from '@expo/vector-icons'
+import HeaderButton from '../components/HeaderButton'
 import { selectors as competitorSelectors } from '../modules/entities/competitors'
+import sortBy from 'sort-by'
 
-const { TouchableOpacity, FlatList, Text, View, StyleSheet } = ReactNative
+const {
+  FlatList,
+  Text,
+  View,
+  StyleSheet
+} = ReactNative
 
 class CompetitorsScreen extends React.Component {
-  renderListItem = (row) => {
+  renderListItem = ({ item }) => {
     return (
       <View style={{ margin: 16 }}>
-        <Text style={{ fontSize: 16 }}>{row.item.name}</Text>
+        <Text style={{ fontSize: 16 }}>{item.name}</Text>
       </View>
     )
   }
@@ -22,7 +28,7 @@ class CompetitorsScreen extends React.Component {
   render = () => {
     return (
       <FlatList
-        data={this.props.competitors}
+        data={this.props.competitors.sort(sortBy('name'))}
         ItemSeparatorComponent={this.renderListItemSeparator}
         ListHeaderComponent={this.renderListItemSeparator}
         ListFooterComponent={this.renderListItemSeparator}
@@ -33,26 +39,13 @@ class CompetitorsScreen extends React.Component {
   }
   static navigationOptions = ({ navigation }) => ({
     title: 'Competitors',
-    headerRight: <HeaderRightButton onPress={() => navigation.navigate('addCompetitor')} />
+    headerRight: <HeaderButton onPress={() => navigation.navigate('addCompetitor')} kind='Ionicons' name='md-person-add' />
   })
   static mapStateToProps = state => ({
     competitors: competitorSelectors.getAll(state)
   })
   static propTypes = {
     competitors: PropTypes.array
-  }
-}
-
-class HeaderRightButton extends React.Component {
-  render = () => {
-    return (
-      <TouchableOpacity onPress={this.props.onPress}>
-        <Ionicons name='md-person-add' color='white' size={24} style={{ marginRight: 16 }} />
-      </TouchableOpacity>
-    )
-  }
-  static propTypes = {
-    onPress: PropTypes.func.isRequired
   }
 }
 
