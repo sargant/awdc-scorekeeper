@@ -1,15 +1,16 @@
 import React, { PropTypes } from 'react'
 import ReactNative from 'react-native'
 import autoConnect from 'react-redux-autoconnect'
+import { Ionicons } from '@expo/vector-icons'
 import { selectors as competitorSelectors } from '../modules/entities/competitors'
 
-const { Button, FlatList, Text, View, StyleSheet } = ReactNative
+const { TouchableOpacity, FlatList, Text, View, StyleSheet } = ReactNative
 
 class CompetitorsScreen extends React.Component {
   renderListItem = (row) => {
     return (
       <View style={{ margin: 16 }}>
-        <Text>{row.item.name}</Text>
+        <Text style={{ fontSize: 16 }}>{row.item.name}</Text>
       </View>
     )
   }
@@ -23,6 +24,8 @@ class CompetitorsScreen extends React.Component {
       <FlatList
         data={this.props.competitors}
         ItemSeparatorComponent={this.renderListItemSeparator}
+        ListHeaderComponent={this.renderListItemSeparator}
+        ListFooterComponent={this.renderListItemSeparator}
         renderItem={this.renderListItem}
         keyExtractor={item => item.id}
       />
@@ -30,17 +33,26 @@ class CompetitorsScreen extends React.Component {
   }
   static navigationOptions = ({ navigation }) => ({
     title: 'Competitors',
-    headerRight: <Button
-      title='Add'
-      color='white'
-      onPress={() => navigation.navigate('addCompetitor')}
-    />
+    headerRight: <HeaderRightButton onPress={() => navigation.navigate('addCompetitor')} />
   })
   static mapStateToProps = state => ({
     competitors: competitorSelectors.getAll(state)
   })
   static propTypes = {
     competitors: PropTypes.array
+  }
+}
+
+class HeaderRightButton extends React.Component {
+  render = () => {
+    return (
+      <TouchableOpacity onPress={this.props.onPress}>
+        <Ionicons name='md-person-add' color='white' size={24} style={{ marginRight: 16 }} />
+      </TouchableOpacity>
+    )
+  }
+  static propTypes = {
+    onPress: PropTypes.func.isRequired
   }
 }
 
