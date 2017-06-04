@@ -16,13 +16,18 @@ class CompetitorsScreen extends React.Component {
   renderListItem = ({ item }) => {
     return (
       <View style={{ margin: 16 }}>
-        <Text style={{ fontSize: 16 }}>{item.name}</Text>
+        <Text style={{ fontSize: 20, color: 'rgba(0, 0, 0, 0.87)' }}>
+          {item.name}
+        </Text>
       </View>
     )
   }
   renderListItemSeparator = () => {
     return (
-      <View style={{ borderColor: 'grey', borderBottomWidth: StyleSheet.hairlineWidth }} />
+      <View style={{
+        borderColor: 'rgba(0, 0, 0, 0.38)',
+        borderBottomWidth: StyleSheet.hairlineWidth
+      }} />
     )
   }
   render = () => {
@@ -39,7 +44,10 @@ class CompetitorsScreen extends React.Component {
   }
   static navigationOptions = ({ navigation }) => ({
     title: 'Competitors',
-    headerRight: <HeaderButton onPress={() => navigation.navigate('addCompetitor')} kind='Ionicons' name='md-person-add' />
+    headerRight: <HeaderButton
+      onPress={() => navigation.navigate('addCompetitor')}
+      kind='Ionicons'
+      name='md-person-add' />
   })
   static mapStateToProps = state => ({
     competitors: competitorSelectors.getAll(state)

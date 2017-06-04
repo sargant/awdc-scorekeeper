@@ -16,7 +16,7 @@ export const initialState = {
 
 export const reducer = handleActions({
   [actions.add]: (state, action) => {
-    const nextId = Math.max(...Object.keys(state.byId)) + 1
+    const nextId = Math.max(0, ...Object.keys(state.byId)) + 1
     return {
       ...state,
       byId: {

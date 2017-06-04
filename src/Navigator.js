@@ -6,12 +6,14 @@ import HomeScreen from './screens/Home'
 import CompetitorsScreen from './screens/Competitors'
 import AddCompetitorScreen from './screens/AddCompetitor'
 import EventsScreen from './screens/Events'
+import AddEventScreen from './screens/AddEvent'
 
 const navigatorRoutes = {
   home: { screen: HomeScreen },
   events: { screen: EventsScreen },
   competitors: { screen: CompetitorsScreen },
-  addCompetitor: { screen: AddCompetitorScreen }
+  addCompetitor: { screen: AddCompetitorScreen },
+  addEvent: { screen: AddEventScreen }
 }
 
 const navigatorConfig = {

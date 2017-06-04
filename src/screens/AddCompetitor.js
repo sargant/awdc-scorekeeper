@@ -1,7 +1,6 @@
 import React, { PropTypes } from 'react'
 import ReactNative from 'react-native'
 import autoConnect from 'react-redux-autoconnect'
-import { Entypo } from '@expo/vector-icons'
 import { actions as competitorActions } from '../modules/entities/competitors'
 import HeaderButton from '../components/HeaderButton'
 
@@ -26,7 +25,10 @@ class AddCompetitorScreen extends React.Component {
       navigation.state.params.saveButtonAction
     return {
       title: 'Add Competitor',
-      headerRight: <HeaderButton onPress={saveButtonAction} kind='Entypo' name='save' />
+      headerRight: <HeaderButton
+        onPress={saveButtonAction}
+        kind='Ionicons'
+        name='md-checkmark' />
     }
   }
   saveForm = () => {
