@@ -506,6 +506,10 @@ babel-plugin-external-helpers@^6.18.0:
   dependencies:
     babel-runtime "^6.22.0"
 
+babel-plugin-idx@^1.5.1:
+  version "1.5.1"
+  resolved "https://registry.yarnpkg.com/babel-plugin-idx/-/babel-plugin-idx-1.5.1.tgz#29eff29f91b22e1f0a314827a94695bd6fbc8e00"
+
 babel-plugin-module-resolver@2.5.0:
   version "2.5.0"
   resolved "https://registry.yarnpkg.com/babel-plugin-module-resolver/-/babel-plugin-module-resolver-2.5.0.tgz#a1204b4aeada066e8afb9b9f9c43e238d73d41bb"
@@ -2795,6 +2799,10 @@ iconv-lite@0.4.15:
 iconv-lite@~0.4.13:
   version "0.4.17"
   resolved "https://registry.yarnpkg.com/iconv-lite/-/iconv-lite-0.4.17.tgz#4fdaa3b38acbc2c031b045d0edcdfe1ecab18c8d"
+
+idx@^1.5.0:
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/idx/-/idx-1.5.0.tgz#2ce9665945fdb36544308f930c78e3f1ef6c4315"
 
 ignore@^3.2.0, ignore@^3.3.3:
   version "3.3.3"
