@@ -1,16 +1,18 @@
 import React from 'react'
 import ReactNative from 'react-native'
-import { FontAwesome } from '@expo/vector-icons'
+import { Ionicons } from '@expo/vector-icons'
 import sortBy from 'sort-by'
 import moment from 'moment'
 import autoConnect from 'react-redux-autoconnect'
 import HeaderButton from '../components/HeaderButton'
 import { selectors as eventSelectors } from '../modules/entities/events'
+import textColors from '../styles/textColors'
 
 const {
   FlatList,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View
 } = ReactNative
 
@@ -18,41 +20,33 @@ class EventsScreen extends React.Component {
   static navigationOptions = ({ navigation }) => ({
     title: 'Events',
     headerRight: <HeaderButton
-      onPress={() => navigation.navigate('addEvent')}
+      onPress={() => navigation.navigate('modifyEvent')}
       kind='Ionicons'
       name='md-add' />
   })
-  renderNoEvents = () => {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <FontAwesome name='calendar-o' color='rgba(0,0,0,0.05)' size={128} />
-        <Text style={{ color: 'grey', fontSize: 24, marginTop: 32 }}>
-          No events
-        </Text>
-      </View>
-    )
-  }
   renderListItem = ({ item }) => {
     return (
-      <View style={{ margin: 16 }}>
-        <Text style={{ fontSize: 20, color: 'rgba(0,0,0,0.87)', marginBottom: 4 }}>
-          {item.name}
-        </Text>
-        <Text style={{ fontSize: 16, color: 'rgba(0,0,0,0.54)' }}>
-          {moment(item.date).format('Do MMMM YYYY')}
-        </Text>
-      </View>
+      <TouchableOpacity onPress={() => this.props.navigation.navigate('eventOverview', { id: item.id })}>
+        <View style={{ marginVertical: 8, marginHorizontal: 16 }}>
+          <Text style={{ fontSize: 18, lineHeight: 1.2 * 18, color: textColors.primary.black, marginBottom: 4 }}>
+            {item.name}
+          </Text>
+          <Text style={{ fontSize: 14, lineHeight: 1.2 * 14, color: textColors.secondary.black }}>
+            {moment(item.date).format('Do MMMM YYYY')}
+          </Text>
+        </View>
+      </TouchableOpacity>
     )
   }
   renderListItemSeparator = () => {
     return (
       <View style={{
-        borderColor: 'rgba(0,0,0,0.38)',
+        borderColor: textColors.divider.black,
         borderBottomWidth: StyleSheet.hairlineWidth
       }} />
     )
   }
-  render = () => {
+  renderList = () => {
     return (
       <FlatList
         data={this.props.events.sort(sortBy('-date'))}
@@ -61,14 +55,33 @@ class EventsScreen extends React.Component {
         ListFooterComponent={this.renderListItemSeparator}
         renderItem={this.renderListItem}
         keyExtractor={item => item.id}
+        initialNumToRender={12}
       />
     )
   }
+  renderEmptyList = () => {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Ionicons name='md-flag' color='rgba(0,0,0,0.05)' size={128} />
+        <Text style={{ color: 'grey', fontSize: 24, marginTop: 32 }}>
+          No events
+        </Text>
+      </View>
+    )
+  }
+
+  render = () => this.props.events.length === 0
+    ? this.renderEmptyList()
+    : this.renderList()
+
   static mapStateToProps = state => ({
     events: eventSelectors.getAll(state)
   })
   static propTypes = {
-    events: React.PropTypes.array
+    events: React.PropTypes.array,
+    navigation: React.PropTypes.shape({
+      navigate: React.PropTypes.func.isRequired
+    })
   }
 }
 

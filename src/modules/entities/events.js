@@ -6,16 +6,15 @@ import rootSelector from './rootSelector'
  * Actions
  */
 export const actions = {
-  add: createAction(Symbol('add event'))
+  add: createAction(Symbol('add event')),
+  reset: createAction(Symbol('reset evens'))
 }
 
 /****************
  * Initial state
  */
 export const initialState = {
-  byId: {
-    1: { id: 1, name: 'First event', date: '2017-01-01' }
-  }
+  byId: {}
 }
 
 /**********
@@ -23,23 +22,24 @@ export const initialState = {
  */
 export const reducer = handleActions({
   [actions.add]: (state, action) => {
-    const nextId = Math.max(0, ...Object.keys(state.byId)) + 1
+    const id = action.payload.id || Math.max(0, ...Object.keys(state.byId)) + 1
     return {
       ...state,
       byId: {
         ...state.byId,
-        [nextId]: { ...action.payload, id: nextId }
+        [id]: { ...action.payload, id }
       }
     }
-  }
+  },
+  [actions.reset]: () => initialState
 }, initialState)
 
 /************
  * Selectors
  */
-const eventsById = createSelector(rootSelector, state => state.events.byId)
+const events = createSelector(rootSelector, state => state.events)
 
 export const selectors = {
-  count: createSelector(eventsById, events => Object.keys(events).length),
-  getAll: createSelector(eventsById, events => Object.values(events))
+  getAll: createSelector(events, events => Object.values(events.byId)),
+  get: createSelector(events, (_, id) => id, (events, id) => id && events.byId[id])
 }

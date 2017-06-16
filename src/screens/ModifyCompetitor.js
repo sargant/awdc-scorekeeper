@@ -1,17 +1,23 @@
 import React, { PropTypes } from 'react'
 import ReactNative from 'react-native'
+import idx from 'idx'
 import autoConnect from 'react-redux-autoconnect'
-import { actions as competitorActions } from '../modules/entities/competitors'
+import * as competitors from '../modules/entities/competitors'
 import HeaderButton from '../components/HeaderButton'
+import textColors from '../styles/textColors'
 
 const { Alert, View, TextInput, Text, StyleSheet } = ReactNative
 
-class AddCompetitorScreen extends React.Component {
-  constructor () {
-    super()
+class ModifyCompetitorScreen extends React.Component {
+  constructor (props) {
+    super(props)
+    const isEditing = !!props.competitor
     this.state = {
       form: {
-        name: ''
+        name: isEditing ? props.competitor.name : ''
+      },
+      ui: {
+        isEditing
       }
     }
   }
@@ -21,22 +27,33 @@ class AddCompetitorScreen extends React.Component {
     })
   }
   static navigationOptions = ({ navigation }) => {
-    const saveButtonAction = navigation.state.params &&
-      navigation.state.params.saveButtonAction
+    const saveButtonAction = idx(navigation, _ => _.state.params.saveButtonAction)
+    const isEditing = !!idx(navigation, _ => _.state.params.id)
     return {
-      title: 'Add Competitor',
+      title: isEditing ? 'Edit Competitor' : 'Add Competitor',
       headerRight: <HeaderButton
         onPress={saveButtonAction}
         kind='Ionicons'
         name='md-checkmark' />
     }
   }
+  updateFormField = (fieldName) => (value) => {
+    this.setState({
+      form: {
+        ...this.state.form,
+        [fieldName]: value
+      }
+    })
+  }
   saveForm = () => {
     if (this.state.form.name.trim() === '') {
       Alert.alert('Please enter a name')
       return
     }
-    this.props.addCompetitor({ name: this.state.form.name.trim() })
+    this.props.addCompetitor({
+      id: this.state.ui.isEditing ? this.props.competitor.id : undefined,
+      name: this.state.form.name.trim()
+    })
     this.props.navigation.goBack()
   }
   render = () => {
@@ -48,25 +65,34 @@ class AddCompetitorScreen extends React.Component {
         <View style={styles.textInputWrapper}>
           <TextInput
             style={styles.textInput}
-            onChangeText={text => this.setState({ form: { name: text } })}
+            onChangeText={this.updateFormField('name')}
             autoFocus
             autoCorrect={false}
             autoCapitalize='words'
-            underlineColorAndroid='rgba(0,0,0,0)'
+            underlineColorAndroid='transparent'
             value={this.state.form.name}
           />
         </View>
       </View>
     )
   }
+  static mapStateToProps = (state, props) => ({
+    competitor: competitors.selectors.get(state, idx(props, _ => _.navigation.state.params.id))
+  })
   static mapDispatchToProps = {
-    addCompetitor: competitorActions.add
+    addCompetitor: competitors.actions.add
   }
   static propTypes = {
     addCompetitor: PropTypes.func.isRequired,
+    competitor: PropTypes.object,
     navigation: PropTypes.shape({
       goBack: PropTypes.func.isRequired,
-      setParams: PropTypes.func.isRequired
+      setParams: PropTypes.func.isRequired,
+      state: PropTypes.shape({
+        params: PropTypes.shape({
+          id: PropTypes.number
+        })
+      })
     })
   }
 }
@@ -78,21 +104,26 @@ const styles = {
     paddingTop: 16
   },
   textInputWrapper: {
-    borderColor: 'grey',
+    backgroundColor: 'white',
+    borderColor: textColors.divider.black,
     borderTopWidth: StyleSheet.hairlineWidth,
     borderBottomWidth: StyleSheet.hairlineWidth
   },
   textInput: {
     fontSize: 18,
-    height: 40,
-    paddingHorizontal: 16,
-    backgroundColor: 'white'
+    lineHeight: 1.2 * 18,
+    height: 1.2 * 18,
+    marginHorizontal: 16,
+    marginVertical: 8,
+    color: textColors.primary.black
   },
   textInputLabel: {
     fontSize: 18,
+    lineHeight: 1.2 * 18,
     paddingHorizontal: 16,
-    paddingVertical: 8
+    paddingVertical: 8,
+    color: textColors.disabled.black
   }
 }
 
-export default autoConnect(AddCompetitorScreen)
+export default autoConnect(ModifyCompetitorScreen)

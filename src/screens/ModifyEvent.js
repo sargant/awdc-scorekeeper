@@ -3,8 +3,10 @@ import ReactNative from 'react-native'
 import moment from 'moment'
 import DateTimePicker from 'react-native-modal-datetime-picker'
 import autoConnect from 'react-redux-autoconnect'
-import { actions as eventActions } from '../modules/entities/events'
+import * as events from '../modules/entities/events'
 import HeaderButton from '../components/HeaderButton'
+import textColors from '../styles/textColors'
+import idx from 'idx'
 
 const {
   Alert,
@@ -15,24 +17,27 @@ const {
   View
 } = ReactNative
 
-class AddEvent extends React.Component {
-  constructor () {
-    super()
+class ModifyEventScreen extends React.Component {
+  constructor (props) {
+    super(props)
+    const isEditing = !!props.event
+    this.inputRefs = {}
     this.state = {
       form: {
-        name: '',
-        date: moment().format('YYYY-MM-DD')
+        name: isEditing ? props.event.name : '',
+        date: isEditing ? props.event.date : moment().format('YYYY-MM-DD')
       },
       ui: {
+        isEditing,
         showDatePicker: false
       }
     }
   }
   static navigationOptions = ({ navigation }) => {
-    const saveButtonAction = navigation.state.params &&
-      navigation.state.params.saveButtonAction
+    const saveButtonAction = idx(navigation, _ => _.state.params.saveButtonAction)
+    const isEditing = !!idx(navigation, _ => _.state.params.id)
     return {
-      title: 'Add Event',
+      title: isEditing ? 'Edit Event' : 'Add Event',
       headerRight: <HeaderButton
         onPress={saveButtonAction}
         kind='Ionicons'
@@ -45,6 +50,7 @@ class AddEvent extends React.Component {
     })
   }
   openDatePicker = () => {
+    this.inputRefs.name.blur()
     this.setState({ ui: { ...this.state.ui, showDatePicker: true } })
   }
   hideDatePicker = () => {
@@ -64,6 +70,7 @@ class AddEvent extends React.Component {
       return
     }
     this.props.addEvent({
+      id: this.state.ui.isEditing ? this.props.event.id : undefined,
       name: this.state.form.name.trim(),
       date: this.state.form.date
     })
@@ -78,18 +85,19 @@ class AddEvent extends React.Component {
         <View style={styles.textInputWrapper}>
           <TextInput
             style={styles.textInput}
+            ref={ref => { this.inputRefs.name = ref }}
             onChangeText={text => this.setState({ form: { ...this.state.form, name: text } })}
             autoFocus
             autoCorrect={false}
             autoCapitalize='sentences'
-            underlineColorAndroid='rgba(0,0,0,0)'
+            underlineColorAndroid='transparent'
             value={this.state.form.name}
           />
         </View>
         <Text style={styles.textInputLabel}>
           Date
         </Text>
-        <View style={styles.staticTextWrapper}>
+        <View style={styles.textInputWrapper}>
           <TouchableOpacity onPress={this.openDatePicker}>
             <Text style={styles.staticText}>
               {moment(this.state.form.date).format('Do MMMM YYYY')}
@@ -97,7 +105,7 @@ class AddEvent extends React.Component {
           </TouchableOpacity>
           <DateTimePicker
             mode='date'
-            datePickerModeAndroid='spinner'
+            datePickerModeAndroid='calendar'
             isVisible={this.state.ui.showDatePicker}
             onCancel={this.hideDatePicker}
             onConfirm={this.setDate}
@@ -106,10 +114,14 @@ class AddEvent extends React.Component {
       </View>
     )
   }
+  static mapStateToProps = (state, props) => ({
+    event: events.selectors.get(state, idx(props, _ => _.navigation.state.params.id))
+  })
   static mapDispatchToProps = {
-    addEvent: eventActions.add
+    addEvent: events.actions.add
   }
   static propTypes = {
+    event: React.PropTypes.object,
     addEvent: React.PropTypes.func.isRequired,
     navigation: React.PropTypes.shape({
       setParams: React.PropTypes.func.isRequired,
@@ -124,36 +136,33 @@ const styles = {
     backgroundColor: '#F5F5F5'
   },
   textInputWrapper: {
-    borderColor: 'grey',
     backgroundColor: 'white',
+    borderColor: textColors.divider.black,
     borderTopWidth: StyleSheet.hairlineWidth,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    paddingVertical: 4
-  },
-  staticTextWrapper: {
-    borderColor: 'grey',
-    backgroundColor: 'white',
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    paddingVertical: 4,
-    height: 48,
-    justifyContent: 'center'
+    borderBottomWidth: StyleSheet.hairlineWidth
   },
   textInput: {
     fontSize: 18,
-    height: 40,
-    paddingHorizontal: 16
+    lineHeight: 1.2 * 18,
+    height: 1.2 * 18,
+    marginVertical: 8,
+    marginHorizontal: 16,
+    color: textColors.primary.black
   },
   staticText: {
     fontSize: 18,
-    paddingHorizontal: 16
+    lineHeight: 1.2 * 18,
+    marginVertical: 8,
+    marginHorizontal: 16,
+    color: textColors.primary.black
   },
   textInputLabel: {
     fontSize: 18,
     paddingHorizontal: 16,
     paddingBottom: 8,
-    paddingTop: 16
+    paddingTop: 16,
+    color: textColors.disabled.black
   }
 }
 
-export default autoConnect(AddEvent)
+export default autoConnect(ModifyEventScreen)

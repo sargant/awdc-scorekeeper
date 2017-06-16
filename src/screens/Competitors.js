@@ -4,33 +4,38 @@ import autoConnect from 'react-redux-autoconnect'
 import HeaderButton from '../components/HeaderButton'
 import { selectors as competitorSelectors } from '../modules/entities/competitors'
 import sortBy from 'sort-by'
+import { Ionicons } from '@expo/vector-icons'
+import textColors from '../styles/textColors'
 
 const {
   FlatList,
   Text,
   View,
-  StyleSheet
+  StyleSheet,
+  TouchableOpacity
 } = ReactNative
 
 class CompetitorsScreen extends React.Component {
   renderListItem = ({ item }) => {
     return (
-      <View style={{ margin: 16 }}>
-        <Text style={{ fontSize: 20, color: 'rgba(0, 0, 0, 0.87)' }}>
-          {item.name}
-        </Text>
-      </View>
+      <TouchableOpacity onPress={() => this.props.navigation.navigate('modifyCompetitor', { id: item.id })}>
+        <View style={{ marginVertical: 8, marginHorizontal: 16 }}>
+          <Text style={{ fontSize: 18, lineHeight: 24, color: textColors.primary.black }}>
+            {item.name}
+          </Text>
+        </View>
+      </TouchableOpacity>
     )
   }
   renderListItemSeparator = () => {
     return (
       <View style={{
-        borderColor: 'rgba(0, 0, 0, 0.38)',
+        borderColor: textColors.divider.black,
         borderBottomWidth: StyleSheet.hairlineWidth
       }} />
     )
   }
-  render = () => {
+  renderList = () => {
     return (
       <FlatList
         data={this.props.competitors.sort(sortBy('name'))}
@@ -39,13 +44,29 @@ class CompetitorsScreen extends React.Component {
         ListFooterComponent={this.renderListItemSeparator}
         renderItem={this.renderListItem}
         keyExtractor={item => item.id}
+        initialNumToRender={20}
       />
     )
   }
+  renderNoCompetitors = () => {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Ionicons name='md-person' color='rgba(0,0,0,0.05)' size={128} />
+        <Text style={{ color: 'grey', fontSize: 24, marginTop: 32 }}>
+          No competitors
+        </Text>
+      </View>
+    )
+  }
+
+  render = () => this.props.competitors.length === 0
+    ? this.renderNoCompetitors()
+    : this.renderList()
+
   static navigationOptions = ({ navigation }) => ({
     title: 'Competitors',
     headerRight: <HeaderButton
-      onPress={() => navigation.navigate('addCompetitor')}
+      onPress={() => navigation.navigate('modifyCompetitor')}
       kind='Ionicons'
       name='md-person-add' />
   })
@@ -53,7 +74,10 @@ class CompetitorsScreen extends React.Component {
     competitors: competitorSelectors.getAll(state)
   })
   static propTypes = {
-    competitors: PropTypes.array
+    competitors: PropTypes.array,
+    navigation: PropTypes.shape({
+      navigate: PropTypes.func.isRequired
+    })
   }
 }
 

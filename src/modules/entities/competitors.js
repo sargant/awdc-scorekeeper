@@ -3,33 +3,35 @@ import { createSelector } from 'reselect'
 import rootSelector from './rootSelector'
 
 export const actions = {
-  add: createAction(Symbol('add competitor'))
+  add: createAction(Symbol('add competitor')),
+  reset: createAction(Symbol('reset competitors'))
 }
 
 export const initialState = {
-  byId: {
-    1: { id: 1, name: 'Dave' },
-    2: { id: 2, name: 'Sarah' },
-    3: { id: 3, name: 'Rob' }
-  }
+  byId: {}
 }
 
 export const reducer = handleActions({
   [actions.add]: (state, action) => {
-    const nextId = Math.max(0, ...Object.keys(state.byId)) + 1
+    const id = action.payload.id || Math.max(0, ...Object.keys(state.byId)) + 1
     return {
       ...state,
       byId: {
         ...state.byId,
-        [nextId]: {
-          ...action.payload,
-          id: nextId
-        }
+        [id]: { ...action.payload, id }
       }
     }
-  }
+  },
+  [actions.reset]: () => initialState
 }, initialState)
 
+/************
+ * Selectors
+ */
+
+const competitors = createSelector(rootSelector, state => state.competitors)
+
 export const selectors = {
-  getAll: createSelector(rootSelector, state => Object.values(state.competitors.byId))
+  getAll: createSelector(competitors, competitors => Object.values(competitors.byId)),
+  get: createSelector(competitors, (_, id) => id, (competitors, id) => id && competitors.byId[id])
 }
